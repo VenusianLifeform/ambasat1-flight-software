@@ -5,6 +5,7 @@
 #include "LoRaPayloadBase.h"
 #include "Sensors.h"
 #include "PersistedConfiguration.h"
+#include "LEDController.h"
 
 #define SATELLITE_STATUS_BUFFER_SIZE 7
 
@@ -23,6 +24,8 @@ private:
     BME680Sensor    _missionSensor;
 #endif  // AMBASAT_MISSION_SENSOR
 
+    LEDController _ledController;
+    
     uint8_t _buffer[SATELLITE_STATUS_BUFFER_SIZE];
     bool _sleeping;
 

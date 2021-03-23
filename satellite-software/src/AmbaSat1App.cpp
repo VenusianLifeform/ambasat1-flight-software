@@ -4,12 +4,11 @@
 #include <LowPower.h>
 #include "Utilities.h"
 #include "Logging.h"
+#include "AmbaSat1Config.h"
 
 //
 // Satellite Physical Setup
 //
-
-#define LED_PIN 9
 
 // Pin mapping
 const lmic_pinmap lmic_pins = {
@@ -43,6 +42,7 @@ AmbaSat1App::AmbaSat1App()
     :   _config(),
         _lsm9DS1Sensor(_config),
         _missionSensor(_config),
+        _ledController(LED_PIN),
         _sleeping(false)
 #ifdef ENABLE_AMBASAT_COMMANDS
         ,
@@ -67,9 +67,7 @@ AmbaSat1App::~AmbaSat1App()
 void AmbaSat1App::setup()
 {
     // Turn on LED during setup
-    pinMode(LED_PIN, OUTPUT);
-    digitalWrite(LED_PIN, LOW);
-    digitalWrite(LED_PIN, HIGH);
+    this->_ledController.switchOn();
 
     _config.init();
     _lsm9DS1Sensor.setup();
@@ -145,7 +143,7 @@ void AmbaSat1App::setup()
     //
     // Finished Setting up. Tun LED off
     //
-    digitalWrite(LED_PIN, LOW);
+    this->_ledController.switchOff();
 }
 
 void AmbaSat1App::loop()
