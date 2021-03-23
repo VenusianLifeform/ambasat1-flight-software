@@ -36,7 +36,16 @@ static const u4_t DEVADDR = 0x00000000 ;  //<< CHANGE
 #define SENSOR_CCS811B      7
 #define SENSOR_TESEO_LIV3R  8
 
-#define LED_PIN (uint8_t)9
+//
+// LED configutation
+//
+#define LED_PIN ((uint8_t)(9))
+
+//
+// Volage reader configuration
+// 
+#define VOLTAGE_READER_VREF_SETTLE_DELAY_MILLISECONDS (10)
+#define VOLTAGE_READER_MAX_BIT_CHECK_ATTEMPTS (1000)
 
 
 #define AMBASAT_MISSION_SENSOR SENSOR_SI1132

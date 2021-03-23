@@ -6,6 +6,7 @@
 #include "Sensors.h"
 #include "PersistedConfiguration.h"
 #include "LEDController.h"
+#include "VoltageReader.h"
 
 #define SATELLITE_STATUS_BUFFER_SIZE 7
 
@@ -25,7 +26,8 @@ private:
 #endif  // AMBASAT_MISSION_SENSOR
 
     LEDController _ledController;
-    
+    VoltageReader _voltageReader;
+
     uint8_t _buffer[SATELLITE_STATUS_BUFFER_SIZE];
     bool _sleeping;
 
