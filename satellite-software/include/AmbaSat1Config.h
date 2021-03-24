@@ -26,7 +26,6 @@ static const u4_t DEVADDR = 0x00000000 ;  //<< CHANGE
 // macro to on the of SENSOR_XXXX values to compile for that mission
 // sensor.
 //
-
 #define SENSOR_SHT30        1
 #define SENSOR_STS21        2
 #define SENSOR_BME680       3
@@ -36,10 +35,14 @@ static const u4_t DEVADDR = 0x00000000 ;  //<< CHANGE
 #define SENSOR_CCS811B      7
 #define SENSOR_TESEO_LIV3R  8
 
+#define AMBASAT_MISSION_SENSOR SENSOR_SI1132
+
+
 //
 // LED configutation
 //
 #define LED_PIN ((uint8_t)(9))
+
 
 //
 // Volage reader configuration
@@ -48,6 +51,20 @@ static const u4_t DEVADDR = 0x00000000 ;  //<< CHANGE
 #define VOLTAGE_READER_MAX_BIT_CHECK_ATTEMPTS (1000)
 
 
-#define AMBASAT_MISSION_SENSOR SENSOR_SI1132
+//
+// Main Control Board telemetry configuration
+//
+#define MAINBOARD_TELEMETRY_PORT_NUMBER                     (1)
+
+#define MAINBOARD_TELEMETRY_BUFFER_REBOOT_COUNT_OFFSET      (0)
+#define MAINBOARD_TELEMETRY_BUFFER_VOLTAGE_OFFSET           (4)
+#define MAINBOARD_TELEMETRY_BUFFER_SENSOR_STATUS_OFFSET     (6)
+#define MAINBOARD_TELEMETRY_SATELLITE_STATUS_BUFFER_SIZE    (7)
+
+#define MAINBOARD_TELEMETRY_SENSOR_STATUS_LSM9DS1_FOUND     0b00000001
+#define MAINBOARD_TELEMETRY_SENSOR_STATUS_LSM9DS1_ACTIVE    0b00000010
+#define MAINBOARD_TELEMETRY_SENSOR_STATUS_MISSION_FOUND     0b00010000
+#define MAINBOARD_TELEMETRY_SENSOR_STATUS_MISSION_ACTIVE    0b00100000
+
 
 #endif // __AmbaSat1Config__

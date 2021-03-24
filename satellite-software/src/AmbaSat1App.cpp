@@ -25,26 +25,15 @@ const lmic_pinmap lmic_pins = {
 
 AmbaSat1App* AmbaSat1App::gApp = nullptr;
 
-//
-// Useful #defines
-//
-
-#define SENSOR_STATUS_LSM9DS1_FOUND     0b00000001
-#define SENSOR_STATUS_LSM9DS1_ACTIVE    0b00000010
-#define SENSOR_STATUS_MISSION_FOUND     0b00010000
-#define SENSOR_STATUS_MISSION_ACTIVE    0b00100000
 
 //
 // AmbaSat1App
 //
 
-AmbaSat1App::AmbaSat1App()
-    :   _config(),
-        _lsm9DS1Sensor(_config),
-        _missionSensor(_config),
-        _ledController(LED_PIN),
-        _voltageReader(VOLTAGE_READER_VREF_SETTLE_DELAY_MILLISECONDS, VOLTAGE_READER_MAX_BIT_CHECK_ATTEMPTS),
-        _sleeping(false)
+AmbaSat1App::AmbaSat1App() : 
+    _hardware(),
+    _mainControlBoardTelemetryPayload(_hardware),
+    _sleeping(false)
 #ifdef ENABLE_AMBASAT_COMMANDS
         ,
         _queuedCommandPort(0xFF)
@@ -57,7 +46,10 @@ AmbaSat1App::AmbaSat1App()
     else {
         AmbaSat1App::gApp = this;
     }
-    _config.setSensorConfigDelegates(&_lsm9DS1Sensor, &_missionSensor);
+
+
+    _hardware.getPersistedConfiguration().setSensorConfigDelegates(
+        &(_hardware.getLSM9DS1Sensor()), &(_hardware.getMissionSensor()));
 }
 
 AmbaSat1App::~AmbaSat1App()
@@ -68,11 +60,11 @@ AmbaSat1App::~AmbaSat1App()
 void AmbaSat1App::setup()
 {
     // Turn on LED during setup
-    this->_ledController.switchOn();
+    this->_hardware.getLEDController().switchOn();
 
-    _config.init();
-    _lsm9DS1Sensor.setup();
-    _missionSensor.setup();
+    this->_hardware.getPersistedConfiguration().init();
+    this->_hardware.getLSM9DS1Sensor().setup();
+    this->_hardware.getMissionSensor().setup();
 
     //
     // Set up LoRaWAN radio
@@ -139,19 +131,19 @@ void AmbaSat1App::setup()
     //
     // set the LMIC uplink frame count
     //
-    LMIC.seqnoUp = _config.getUplinkFrameCount();
+    LMIC.seqnoUp = this->_hardware.getPersistedConfiguration().getUplinkFrameCount();
 
     //
     // Finished Setting up. Tun LED off
     //
-    this->_ledController.switchOff();
+    this->_hardware.getLEDController().switchOff();
 }
 
 void AmbaSat1App::loop()
 {
 
-    uint8_t pattern = _config.getUplinkPattern();
-    UplinkPayloadType lastPayload = _config.getLastPayloadUplinked();
+    uint8_t pattern = this->_hardware.getPersistedConfiguration().getUplinkPattern();
+    UplinkPayloadType lastPayload = this->_hardware.getPersistedConfiguration().getLastPayloadUplinked();
     PRINT_INFO(F("Transmit pattern "));
     PRINT_INFO(pattern);
     PRINT_INFO(F(", last payload "));
@@ -190,18 +182,18 @@ void AmbaSat1App::loop()
             switch (transmitQueue[i]) {
                 case SATTELITE_PAYLOAD:
                     PRINTLN_INFO(F("Sending Satellite Status"));
-                    sendSensorPayload(*this);
+                    sendSensorPayload(this->_mainControlBoardTelemetryPayload);
                     break;
                 case LSM9DS1_PAYLOAD:
-                    if (_lsm9DS1Sensor.isActive()) {
+                    if (this->_hardware.getLSM9DS1Sensor().isActive()) {
                         PRINTLN_INFO(F("Sending LSM9DS1 sensor"));
-                        sendSensorPayload(_lsm9DS1Sensor);
+                        sendSensorPayload(this->_hardware.getLSM9DS1Sensor());
                     }
                     break;
                 case MISSION_SENSOR_PAYLOAD:
-                    if (_missionSensor.isActive()) {
+                    if (this->_hardware.getMissionSensor().isActive()) {
                         PRINTLN_INFO(F("Sending mission sensor"));
-                        sendSensorPayload(_missionSensor);
+                        sendSensorPayload(this->_hardware.getMissionSensor());
                     }
                     break;
                 default:
@@ -215,21 +207,21 @@ void AmbaSat1App::loop()
         }
     }
     // defer CRC calculation until subsequent frame count config being set
-    _config.setLastPayloadUplinked(lastPayload);
+    this->_hardware.getPersistedConfiguration().setLastPayloadUplinked(lastPayload);
     //
     // technically there is some risk that the satellite will loose power between
     // the first transmission above and the last one, and in such case we will not
     // capture the uplink frame count. We are accepting that risk in order to reduce
     // number of time we write to EEPROM.
     //
-    _config.setUplinkFrameCount(LMIC.seqnoUp);
-    _config.updateCRC();
+    this->_hardware.getPersistedConfiguration().setUplinkFrameCount(LMIC.seqnoUp);
+    this->_hardware.getPersistedConfiguration().updateCRC();
 
     // flush serial before going to sleep
     Serial.flush();
 
     // sleep device for designated sleep cycles
-    for (int i=0; i < _config.getUplinkSleepCycles(); i++)
+    for (int i=0; i < this->_hardware.getPersistedConfiguration().getUplinkSleepCycles(); i++)
     {
         LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);    //sleep 8 seconds * sleepcycles
     }
@@ -533,43 +525,4 @@ void onEvent(ev_t ev)
         PRINTLN_ERROR(F("EV_TXCOMPLETE (includes RX windows)"));
         Serial.flush();
     }
-}
-
-
-//
-// Satellite Status Payload Handling
-//
-
-const uint8_t*
-AmbaSat1App::getCurrentMeasurementBuffer(void)
-{
-    // Buffer format
-    //
-    //      uint32_t    reboot count
-    //      uint16_t    voltage
-    //      uint8_t     sensor status
-    //
-    //  TOTAL BUFFER SIZE --> 7 bytes
-    //
-
-    hton_int32(_config.getRebootCount(), &(_buffer[0]));
-    hton_int16(this->_voltageReader.readVoltage(), &(_buffer[4]));
-
-    // calculate the sensor status byte
-    uint8_t sensorStatus = 0x00;
-    if (_lsm9DS1Sensor.isFound()) {
-        sensorStatus |= SENSOR_STATUS_LSM9DS1_FOUND;
-    }
-    if (_lsm9DS1Sensor.isActive()) {
-        sensorStatus |= SENSOR_STATUS_LSM9DS1_ACTIVE;
-    }
-    if (_missionSensor.isFound()) {
-        sensorStatus |= SENSOR_STATUS_MISSION_FOUND;
-    }
-    if (_missionSensor.isActive()) {
-        sensorStatus |= SENSOR_STATUS_MISSION_ACTIVE;
-    }
-
-    _buffer[6] = sensorStatus;
-    return _buffer;
 }

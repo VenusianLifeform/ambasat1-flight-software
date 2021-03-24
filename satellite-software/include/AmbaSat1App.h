@@ -7,28 +7,13 @@
 #include "PersistedConfiguration.h"
 #include "LEDController.h"
 #include "VoltageReader.h"
+#include "MainControlBoardTelemetryPayload.h"
 
-#define SATELLITE_STATUS_BUFFER_SIZE 7
-
-class AmbaSat1App : public LoRaPayloadBase {
+class AmbaSat1App {
 private:
-    PersistedConfiguration _config;
+    Hardware _hardware;
+    MainControlBoardTelemetryPayload _mainControlBoardTelemetryPayload;
 
-    LSM9DS1Sensor   _lsm9DS1Sensor;
-#if AMBASAT_MISSION_SENSOR == SENSOR_SI1132
-    Si1132Sensor    _missionSensor;
-#elif AMBASAT_MISSION_SENSOR == SENSOR_SHT30
-    SHT30Sensor     _missionSensor;
-#elif AMBASAT_MISSION_SENSOR == SENSOR_STS21
-    STS21Sensor     _missionSensor;
-#elif AMBASAT_MISSION_SENSOR == SENSOR_BME680
-    BME680Sensor    _missionSensor;
-#endif  // AMBASAT_MISSION_SENSOR
-
-    LEDController _ledController;
-    VoltageReader _voltageReader;
-
-    uint8_t _buffer[SATELLITE_STATUS_BUFFER_SIZE];
     bool _sleeping;
 
     void sendSensorPayload(LoRaPayloadBase& sensor);
@@ -43,15 +28,6 @@ public:
     // standard Arduino functions
     void setup();
     void loop();
-
-    //
-    // Methods for handling the "Statellite Status" payload
-    virtual const uint8_t* getCurrentMeasurementBuffer(void);
-    virtual uint8_t getMeasurementBufferSize() const                    { return SATELLITE_STATUS_BUFFER_SIZE; }
-    virtual uint8_t getPort() const                                     { return 1; }
-
-    int16_t readVccMilliVolts(void) const;
-
 
     //
     // Command Handling (if enabled)
