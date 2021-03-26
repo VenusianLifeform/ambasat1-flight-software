@@ -1,5 +1,5 @@
 #include "Hardware.h"
-#include "AmbaSat1Config.h"
+#include "KorellianP1SatConfig.h"
 #include "Logging.h"
 
 // Static instance

@@ -1,14 +1,14 @@
 #include <Arduino.h>
 #include "Logging.h"
-#include "AmbaSat1App.h"
+#include "KorellianP1SatApp.h"
 
-AmbaSat1App* satelliteApp;
+KorellianP1SatApp* satelliteApp;
 
 void setup()
 {
   Serial.begin(9600);
 
-  satelliteApp = new AmbaSat1App();
+  satelliteApp = new KorellianP1SatApp();
   satelliteApp->setup();
 }
 

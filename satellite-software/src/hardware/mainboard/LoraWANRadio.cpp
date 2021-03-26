@@ -2,7 +2,7 @@
 #include <lmic.h>
 #include <hal/hal.h>
 #include "Logging.h"
-#include "AmbaSat1Config.h"
+#include "KorellianP1SatConfig.h"
 #include "Hardware.h"
 
 //
@@ -184,7 +184,7 @@ void onEvent(ev_t ev)
             );
 
     #ifdef ENABLE_AMBASAT_COMMANDS
-            AmbaSat1App::gApp->queueCommand(
+            KorellianP1SatApp::gApp->queueCommand(
                 LMIC.frame[LMIC.dataBeg-1],
                 &LMIC.frame[LMIC.dataBeg],
                 LMIC.dataLen

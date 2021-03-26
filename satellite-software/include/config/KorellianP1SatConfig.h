@@ -1,5 +1,6 @@
-#ifndef __AmbaSat1Config__
-#define __AmbaSat1Config__
+#ifndef __KORELLIAN_P1_SAT_CONFIG_H__
+#define __KORELLIAN_P1_SAT_CONFIG_H__
+
 #include <Arduino.h>
 #include <lmic.h>
 
@@ -67,4 +68,4 @@ static const u4_t DEVADDR = 0x00000000 ;  //<< CHANGE
 #define MAINBOARD_TELEMETRY_SENSOR_STATUS_MISSION_ACTIVE    0b00100000
 
 
-#endif // __AmbaSat1Config__
+#endif // __KORELLIAN_P1_SAT_CONFIG_H__

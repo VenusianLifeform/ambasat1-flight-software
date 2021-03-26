@@ -1,7 +1,7 @@
-#ifndef __AmbaSat1App__
-#define __AmbaSat1App__
-#include <lmic.h>
-#include "AmbaSat1Config.h"
+#ifndef __KORELLIAN_P1_SAT_APP_H__
+#define __KORELLIAN_P1_SAT_APP_H__
+
+#include "KorellianP1SatConfig.h"
 #include "LoRaPayloadBase.h"
 #include "Sensors.h"
 #include "PersistedConfiguration.h"
@@ -11,7 +11,7 @@
 
 extern void transmissionReceivedDelegate(uint8_t port, const uint8_t* receivedData, uint8_t receivedDataLen);
 
-class AmbaSat1App {
+class KorellianP1SatApp {
 private:
     Hardware _hardware;
     MainControlBoardTelemetryPayload _mainControlBoardTelemetryPayload;
@@ -20,10 +20,10 @@ private:
 
     friend void onEvent (ev_t ev);
 public:
-    static AmbaSat1App*  gApp;
+    static KorellianP1SatApp*  gApp;
 
-    AmbaSat1App();
-    virtual ~AmbaSat1App();
+    KorellianP1SatApp();
+    virtual ~KorellianP1SatApp();
 
     // standard Arduino functions
     void setup();
@@ -63,4 +63,4 @@ void initfunc (osjob_t* j);
 } // extern "C"
 #endif
 
-#endif //__AmbaSat1App__
+#endif // __KORELLIAN_P1_SAT_APP_H__

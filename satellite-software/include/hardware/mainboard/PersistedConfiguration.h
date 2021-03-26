@@ -1,6 +1,7 @@
 #ifndef __PersistedConfiguration__
 #define __PersistedConfiguration__
-#include "AmbaSat1Config.h"
+
+#include "KorellianP1SatConfig.h"
 
 //
 // Configuration ENUMs and defines

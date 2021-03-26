@@ -1,16 +1,16 @@
-#include "AmbaSat1App.h"
+#include "KorellianP1SatApp.h"
 #include <LowPower.h>
 #include "Utilities.h"
 #include "Logging.h"
-#include "AmbaSat1Config.h"
+#include "KorellianP1SatConfig.h"
 
 
 //
 // Global Variable so LMIC functions can access app object
 //
-AmbaSat1App* AmbaSat1App::gApp = nullptr;
+KorellianP1SatApp* KorellianP1SatApp::gApp = nullptr;
 
-AmbaSat1App::AmbaSat1App() : 
+KorellianP1SatApp::KorellianP1SatApp() : 
     _hardware(),
     _mainControlBoardTelemetryPayload(_hardware)
 #ifdef ENABLE_AMBASAT_COMMANDS
@@ -18,21 +18,21 @@ AmbaSat1App::AmbaSat1App() :
         _queuedCommandPort(0xFF)
 #endif
 {
-    if (AmbaSat1App::gApp != nullptr) {
+    if (KorellianP1SatApp::gApp != nullptr) {
         // complain loudly. Only one app object should be created.
         PRINT_ERROR(F("ERROR multiple app objs"));
         return;
     }
     
-    AmbaSat1App::gApp = this;
+    KorellianP1SatApp::gApp = this;
 }
 
-AmbaSat1App::~AmbaSat1App()
+KorellianP1SatApp::~KorellianP1SatApp()
 {
-    AmbaSat1App::gApp = nullptr;
+    KorellianP1SatApp::gApp = nullptr;
 }
 
-void AmbaSat1App::setup()
+void KorellianP1SatApp::setup()
 {
     // Turn on LED during setup
     this->_hardware.getLEDController().switchOn();
@@ -48,7 +48,7 @@ void AmbaSat1App::setup()
     this->_hardware.getLEDController().switchOff();
 }
 
-void AmbaSat1App::loop()
+void KorellianP1SatApp::loop()
 {
     uint8_t pattern = this->_hardware.getPersistedConfiguration().getUplinkPattern();
     UplinkPayloadType lastPayload = this->_hardware.getPersistedConfiguration().getLastPayloadUplinked();
@@ -140,20 +140,20 @@ void AmbaSat1App::loop()
     }
 }
 
-void AmbaSat1App::incomingTransmission(uint8_t port, const uint8_t* receivedData, uint8_t receivedDataLen)
+void KorellianP1SatApp::incomingTransmission(uint8_t port, const uint8_t* receivedData, uint8_t receivedDataLen)
 {
     // TODO: handle commands
 }
 
 extern void transmissionReceivedDelegate(uint8_t port, const uint8_t* receivedData, uint8_t receivedDataLen)
 {
-    if (AmbaSat1App::gApp != nullptr)
+    if (KorellianP1SatApp::gApp != nullptr)
     {
-        AmbaSat1App::gApp->incomingTransmission(port, receivedData, receivedDataLen);
+        KorellianP1SatApp::gApp->incomingTransmission(port, receivedData, receivedDataLen);
     }
 }
 
-void AmbaSat1App::sendSensorPayload(LoRaPayloadBase& sensor)
+void KorellianP1SatApp::sendSensorPayload(LoRaPayloadBase& sensor)
 {
     const uint8_t* data_ptr = sensor.getCurrentMeasurementBuffer();
     if (data_ptr == nullptr) {
@@ -174,7 +174,7 @@ void AmbaSat1App::sendSensorPayload(LoRaPayloadBase& sensor)
 }
 
 #ifdef ENABLE_AMBASAT_COMMANDS
-void AmbaSat1App::queueCommand(uint8_t port, uint8_t* receivedData, uint8_t receivedDataLen)
+void KorellianP1SatApp::queueCommand(uint8_t port, uint8_t* receivedData, uint8_t receivedDataLen)
 {
     if ((_queuedCommandPort == 0xFF) && (receivedDataLen <= QUEUED_COMMAND_BUFFER_SIZE )) {
         _queuedCommandPort = port;
@@ -188,7 +188,7 @@ void AmbaSat1App::queueCommand(uint8_t port, uint8_t* receivedData, uint8_t rece
     }
 }
 
-void AmbaSat1App::processQueuedCommand(void)
+void KorellianP1SatApp::processQueuedCommand(void)
 {
     if (_queuedCommandPort == 0xFF) {
         PRINTLN_DEBUG(F("No queued cmds to process"));
@@ -258,7 +258,7 @@ void AmbaSat1App::processQueuedCommand(void)
 
 }
 
-uint8_t AmbaSat1App::handleCommand(uint16_t cmdSequenceID, uint8_t command, uint8_t* receivedData, uint8_t receivedDataLen)
+uint8_t KorellianP1SatApp::handleCommand(uint16_t cmdSequenceID, uint8_t command, uint8_t* receivedData, uint8_t receivedDataLen)
 {
     // Commands are identified in the first byte. Commands that the satellite supports:
     //
@@ -284,7 +284,7 @@ uint8_t AmbaSat1App::handleCommand(uint16_t cmdSequenceID, uint8_t command, uint
     return CMD_STATUS_UNKNOWN_CMD;
 }
 
-uint8_t AmbaSat1App::executeBlinkCmd(uint8_t* receivedData, uint8_t receivedDataLen)
+uint8_t KorellianP1SatApp::executeBlinkCmd(uint8_t* receivedData, uint8_t receivedDataLen)
 {
     if (receivedDataLen != 1 ) {
         return CMD_STATUS_BAD_DATA_LEN;
@@ -325,7 +325,7 @@ uint8_t AmbaSat1App::executeBlinkCmd(uint8_t* receivedData, uint8_t receivedData
     return CMD_STATUS_SUCCESS;
 }
 
-uint8_t AmbaSat1App::executeUplinkPatternCmd(uint8_t* receivedData, uint8_t receivedDataLen)
+uint8_t KorellianP1SatApp::executeUplinkPatternCmd(uint8_t* receivedData, uint8_t receivedDataLen)
 {
     if (receivedDataLen != 1 ) {
         return CMD_STATUS_BAD_DATA_LEN;
@@ -340,7 +340,7 @@ uint8_t AmbaSat1App::executeUplinkPatternCmd(uint8_t* receivedData, uint8_t rece
     return CMD_STATUS_SUCCESS;
 }
 
-uint8_t AmbaSat1App::executeUplinkRateCmd(uint8_t* receivedData, uint8_t receivedDataLen)
+uint8_t KorellianP1SatApp::executeUplinkRateCmd(uint8_t* receivedData, uint8_t receivedDataLen)
 {
     if (receivedDataLen != 1 ) {
         return CMD_STATUS_BAD_DATA_LEN;
@@ -355,7 +355,7 @@ uint8_t AmbaSat1App::executeUplinkRateCmd(uint8_t* receivedData, uint8_t receive
     return CMD_STATUS_SUCCESS;
 }
 
-uint8_t AmbaSat1App::executeSetFrameCountCmd(uint8_t* receivedData, uint8_t receivedDataLen)
+uint8_t KorellianP1SatApp::executeSetFrameCountCmd(uint8_t* receivedData, uint8_t receivedDataLen)
 {
     if (receivedDataLen != 2 ) {
         return CMD_STATUS_BAD_DATA_LEN;

@@ -2,7 +2,7 @@
 #define __MAIN_CONTROL_BOARD_TELEMETRY_PAYLOAD_H__
 
 #include "Hardware.h"
-#include "AmbaSat1Config.h"
+#include "KorellianP1SatConfig.h"
 #include "LoRaPayloadBase.h"
 
 class MainControlBoardTelemetryPayload : public LoRaPayloadBase
