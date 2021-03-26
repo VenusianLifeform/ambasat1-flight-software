@@ -9,12 +9,12 @@
 #include "VoltageReader.h"
 #include "MainControlBoardTelemetryPayload.h"
 
+extern void transmissionReceivedDelegate(uint8_t port, const uint8_t* receivedData, uint8_t receivedDataLen);
+
 class AmbaSat1App {
 private:
     Hardware _hardware;
     MainControlBoardTelemetryPayload _mainControlBoardTelemetryPayload;
-
-    bool _sleeping;
 
     void sendSensorPayload(LoRaPayloadBase& sensor);
 
@@ -28,7 +28,9 @@ public:
     // standard Arduino functions
     void setup();
     void loop();
+    void incomingTransmission(uint8_t port, const uint8_t* receivedData, uint8_t receivedDataLen);
 
+ 
     //
     // Command Handling (if enabled)
     //

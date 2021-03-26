@@ -7,6 +7,7 @@ Hardware* Hardware::g_hardware = nullptr;
 
 Hardware::Hardware() : 
     _config(),
+    _loraWANRadio(_config),
     _voltageReader(VOLTAGE_READER_VREF_SETTLE_DELAY_MILLISECONDS, VOLTAGE_READER_MAX_BIT_CHECK_ATTEMPTS),
     _ledController(LED_PIN),
     _lsm9DS1Sensor(_config),
@@ -37,6 +38,11 @@ Hardware::~Hardware()
 PersistedConfiguration& Hardware::getPersistedConfiguration() const
 {
     return (PersistedConfiguration&)_config;
+}
+
+LoraWANRadio& Hardware::getLoraWANRadio() const
+{
+    return (LoraWANRadio&)_loraWANRadio;
 }
 
 VoltageReader& Hardware::getVoltageReader() const
