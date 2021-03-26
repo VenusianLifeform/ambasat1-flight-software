@@ -165,11 +165,11 @@ void LoraWANRadio::onLinkReset()
 // =========================================================================================================================================
 // onEvent
 // =========================================================================================================================================
-void onEvent(ev_t ev)
+void onEvent(ev_t radioEvent)
 {
-    PRINTLN_INFO(F("OnEvent"));
+    PRINTLN_INFO(F("onEvent"));
 
-    if (ev == EV_TXCOMPLETE) {
+    if (radioEvent == EV_TXCOMPLETE) {
         // Notify radio class that sending transmission is complete
         Hardware::g_hardware->getLoraWANRadio().onTransmissionComplete();
 
@@ -195,10 +195,10 @@ void onEvent(ev_t ev)
         }
 
         PRINTLN_INFO(F("EV_TXCOMPLETE (includes RX windows)"));
-    } else if (ev == EV_LINK_DEAD) {
+    } else if (radioEvent == EV_LINK_DEAD) {
         // Notify radio class that link is dead
         Hardware::g_hardware->getLoraWANRadio().onLinkDead();
-    } else if (ev == EV_RESET) {
+    } else if (radioEvent == EV_RESET) {
         // Notify radio class that link is reset
         Hardware::g_hardware->getLoraWANRadio().onLinkReset();
     }

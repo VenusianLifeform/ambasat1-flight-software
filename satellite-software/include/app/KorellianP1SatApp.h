@@ -1,12 +1,7 @@
 #ifndef __KORELLIAN_P1_SAT_APP_H__
 #define __KORELLIAN_P1_SAT_APP_H__
 
-#include "KorellianP1SatConfig.h"
 #include "LoRaPayloadBase.h"
-#include "Sensors.h"
-#include "PersistedConfiguration.h"
-#include "LEDController.h"
-#include "VoltageReader.h"
 #include "MainControlBoardTelemetryPayload.h"
 
 extern void transmissionReceivedDelegate(uint8_t port, const uint8_t* receivedData, uint8_t receivedDataLen);
@@ -17,8 +12,6 @@ private:
     MainControlBoardTelemetryPayload _mainControlBoardTelemetryPayload;
 
     void sendSensorPayload(LoRaPayloadBase& sensor);
-
-    friend void onEvent (ev_t ev);
 public:
     static KorellianP1SatApp*  gApp;
 
@@ -30,7 +23,6 @@ public:
     void loop();
     void incomingTransmission(uint8_t port, const uint8_t* receivedData, uint8_t receivedDataLen);
 
- 
     //
     // Command Handling (if enabled)
     //
