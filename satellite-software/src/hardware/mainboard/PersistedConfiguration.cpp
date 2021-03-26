@@ -44,26 +44,8 @@ PersistedConfiguration::PersistedConfiguration()
 
 }
 
-void PersistedConfiguration::init(void)
-{
-    // its considered a programming error if this function is called before
-    // the sensor delegates are set.
-    if ((_LSM9DS1Delegate == nullptr)||(_missionSensorDelegate == nullptr)) {
-        PRINTLN_DEBUG(F("ERROR called PersistedConfiguration init too soon"));
-        return;
-    }
-
-    if (isEEPROMErased()) {
-        resetToDefaults();
-    } else {
-        loadAllCongigurations();
-    }
-
-    setRebootCount(_rebootCount+1);
-    updateCRC();
-}
-
-void PersistedConfiguration::setSensorConfigDelegates(SensorConfigurationDelegate* LSM9DS1Delegate, SensorConfigurationDelegate* missionSensorDelegate)
+void PersistedConfiguration::init(
+    SensorConfigurationDelegate* LSM9DS1Delegate, SensorConfigurationDelegate* missionSensorDelegate)
 {
     // it is a programming error to call this more than once
     if (_LSM9DS1Delegate == nullptr) {
@@ -80,6 +62,22 @@ void PersistedConfiguration::setSensorConfigDelegates(SensorConfigurationDelegat
     // now set eeprom base addresses
     _LSM9DS1Delegate->setBaseEEPROMAddress(CONFIG_EEPROM_BASE_ADDR+CONFIG_SATELLITE_BLOCK_SIZE);
     _missionSensorDelegate->setBaseEEPROMAddress(CONFIG_EEPROM_BASE_ADDR+CONFIG_SATELLITE_BLOCK_SIZE+_LSM9DS1Delegate->configBlockSize());
+
+    // its considered a programming error if this function is called before
+    // the sensor delegates are set.
+    if ((_LSM9DS1Delegate == nullptr)||(_missionSensorDelegate == nullptr)) {
+        PRINTLN_DEBUG(F("ERROR called PersistedConfiguration init too soon"));
+        return;
+    }
+
+    if (isEEPROMErased()) {
+        resetToDefaults();
+    } else {
+        loadAllCongigurations();
+    }
+
+    setRebootCount(_rebootCount+1);
+    updateCRC();
 }
 
 uint8_t PersistedConfiguration::configBlockSize(void) const

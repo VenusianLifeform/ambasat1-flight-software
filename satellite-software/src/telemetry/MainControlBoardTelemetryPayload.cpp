@@ -27,8 +27,12 @@ const uint8_t* MainControlBoardTelemetryPayload::getCurrentMeasurementBuffer(voi
     //  TOTAL BUFFER SIZE --> 7 bytes
     //
 
-    hton_int32(this->_hardware.getPersistedConfiguration().getRebootCount(), &(this->_buffer[MAINBOARD_TELEMETRY_BUFFER_REBOOT_COUNT_OFFSET]));
-    hton_int16(this->_hardware.getVoltageReader().readVoltage(), &(_buffer[MAINBOARD_TELEMETRY_BUFFER_VOLTAGE_OFFSET]));
+    hton_int32(
+        this->_hardware.getPersistedConfiguration().getRebootCount(), 
+        &(this->_buffer[MAINBOARD_TELEMETRY_BUFFER_REBOOT_COUNT_OFFSET]));
+    hton_int16(
+        this->_hardware.getVoltageReader().readVoltage(), 
+        &(_buffer[MAINBOARD_TELEMETRY_BUFFER_VOLTAGE_OFFSET]));
 
     // calculate the sensor status byte
     uint8_t sensorStatus = 0x00;

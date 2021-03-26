@@ -64,12 +64,10 @@ private:
     void setRebootCount(uint32_t rebootCount);
 public:
     PersistedConfiguration();
-    void init(void);
+    void init(SensorConfigurationDelegate* LSM9DS1Delegate, SensorConfigurationDelegate* missionSensorDelegate);
 
     void resetToDefaults(void);
     void updateCRC(void);
-
-    void setSensorConfigDelegates(SensorConfigurationDelegate* LSM9DS1Delegate, SensorConfigurationDelegate* missionSensorDelegate);
 
     //
     // config items

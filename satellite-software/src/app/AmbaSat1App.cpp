@@ -25,9 +25,6 @@ AmbaSat1App::AmbaSat1App() :
     }
     
     AmbaSat1App::gApp = this;
-    
-    _hardware.getPersistedConfiguration().setSensorConfigDelegates(
-        &(_hardware.getLSM9DS1Sensor()), &(_hardware.getMissionSensor()));
 }
 
 AmbaSat1App::~AmbaSat1App()
@@ -40,7 +37,9 @@ void AmbaSat1App::setup()
     // Turn on LED during setup
     this->_hardware.getLEDController().switchOn();
 
-    this->_hardware.getPersistedConfiguration().init();
+    this->_hardware.getPersistedConfiguration().init(
+        &(this->_hardware.getLSM9DS1Sensor()), 
+        &(this->_hardware.getMissionSensor()));
     this->_hardware.getLSM9DS1Sensor().setup();
     this->_hardware.getMissionSensor().setup();
     this->_hardware.getLoraWANRadio().setup(transmissionReceivedDelegate);
