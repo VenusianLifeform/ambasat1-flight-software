@@ -2,6 +2,7 @@
 #define __HARDWARE_H__
 
 #include "PersistedConfiguration.h"
+#include "EEPROMStorage.h"
 #include "VoltageReader.h"
 #include "LEDController.h"
 #include "LSM9DS1Sensor.h"
@@ -21,6 +22,7 @@ class Hardware
 {
     private:
         PersistedConfiguration _config;
+        EEPROMStorage _eepromStorage;
         LoraWANRadio _loraWANRadio;
         VoltageReader _voltageReader;
         LEDController _ledController;

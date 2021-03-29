@@ -20,6 +20,7 @@ static const u1_t PROGMEM APPSKEY[16] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x
 // LoRaWAN end-device address (DevAddr)
 static const u4_t DEVADDR = 0x00000000 ;  //<< CHANGE
 
+
 //
 // Mission Sensor
 //
@@ -43,6 +44,12 @@ static const u4_t DEVADDR = 0x00000000 ;  //<< CHANGE
 // LED configutation
 //
 #define LED_PIN ((uint8_t)(9))
+
+
+///
+/// EEPROM Configuration
+///
+#define EEPROM_BASE_ADDRESS (0x0000)
 
 
 //

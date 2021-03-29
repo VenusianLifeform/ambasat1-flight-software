@@ -1,7 +1,7 @@
 #ifndef __PersistedConfiguration__
 #define __PersistedConfiguration__
 
-#include "KorellianP1SatConfig.h"
+#include <stdint.h>
 
 //
 // Configuration ENUMs and defines
