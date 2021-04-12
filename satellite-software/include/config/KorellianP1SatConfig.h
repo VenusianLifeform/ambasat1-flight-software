@@ -28,16 +28,16 @@ static const u4_t DEVADDR = 0x00000000 ;  //<< CHANGE
 // macro to on the of SENSOR_XXXX values to compile for that mission
 // sensor.
 //
-#define SENSOR_SHT30        1
-#define SENSOR_STS21        2
-#define SENSOR_BME680       3
-#define SENSOR_OPT3001DNPT  4
-#define SENSOR_ZMOD4410AI1V 5
-#define SENSOR_SI1132       6
-#define SENSOR_CCS811B      7
-#define SENSOR_TESEO_LIV3R  8
+#define SENSOR_SHT30        (1)
+#define SENSOR_STS21        (2)
+#define SENSOR_BME680       (3)
+#define SENSOR_OPT3001DNPT  (4)
+#define SENSOR_ZMOD4410AI1V (5)
+#define SENSOR_SI1132       (6)
+#define SENSOR_CCS811B      (7)
+#define SENSOR_TESEO_LIV3R  (8)
 
-#define AMBASAT_MISSION_SENSOR SENSOR_SI1132
+#define AMBASAT_MISSION_SENSOR (SENSOR_SI1132)
 
 
 //
@@ -49,7 +49,17 @@ static const u4_t DEVADDR = 0x00000000 ;  //<< CHANGE
 ///
 /// EEPROM Configuration
 ///
-#define EEPROM_BASE_ADDRESS (0x0000)
+#define EEPROM_BASE_ADDRESS                     (0x0000)
+#define EEPROM_TOTAL_SIZE                       (1024)
+#define EEPROM_USED_BY_STORAGE_DATA_SIZE        (1000)
+#define EEPROM_NUMBER_OF_REDUNTANT_PARTITIONS   (5)
+#define EEPROM_MAX_USER_DATA_SIZE               (EEPROM_USED_BY_STORAGE_DATA_SIZE/EEPROM_NUMBER_OF_REDUNTANT_PARTITIONS)
+#define EEPROM_USER_DATA_OFFET                  (0x0000)
+#define EEPROM_PARTITION_SIZE                   (EEPROM_MAX_USER_DATA_SIZE)
+#define EEPROM_GET_OFFSET_FOR_USER_DATA(partition, userDataOffert) \
+                                                (EEPROM_USER_DATA_OFFET + partition * EEPROM_PARTITION_SIZE + userDataOffert)
+
+
 
 
 //
